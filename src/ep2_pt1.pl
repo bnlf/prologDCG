@@ -16,9 +16,6 @@ sujeito(X, S0, S):-
 
 predicado(Y, V, S0, S):-
 	verbo(S0, SH, ST),
-	V=SH.
-predicado(Y, V, S0, S):-
-	verbo(S0, SH, ST),
 	V=SH,
 	disciplina(ST, A, S2), 
 	Y=A.
