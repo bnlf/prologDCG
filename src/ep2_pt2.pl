@@ -1,3 +1,4 @@
+% 
 monta_lista(L):-
     leChar(X, T),
     completaLinha(X, T, L).

@@ -4,42 +4,43 @@
 pesquisa(X, S0, S):-
     S0=[quem|S1],
     predicado(Z, V, S1, S2),
-    disciplina(S2, A, S3),
-    leciona(A, Zs).
+    leciona(Z, Zs).
+
+pesquisa(X, S0, S):-
+    S0=[quem|S1],
+    S1=[da|S2],
+    artigo(S2,S3),
+    S3=[que|S4],
+    lecionam(X, Zs).
 
 pesquisa(X, S0, S):-
     S0=[quando|S1],
     predicado(Z, V, S1, S2),
-    disciplina(S2, A, S3),
-    aulas(A, Zs).
+    aulas(Z, Zs).
 
 pesquisa(X, S0, S):-
-    S0=[quem|S1],
-    predicado(Z, V, S1, S2),
-    artigo(S2, S3),
-    S3=[que|S4],
-    lecionam(X, Zs).
-
-% pesquisa(X, S0, S):-
-%     artigo(S0, S1),
-%     S1=[que|S2],
-%     artigo(S2, S3),
-%     professor(S3, A, S4),
-%     predicado(Z, V, S4, S5),
-%     leciona(A, Zs).
-
-% como não terminei essa implementação, coloquei aqui para não 
-% impactar o pt1
-predicado(Z, V, S0, S):-
-    verbo(S0, SH, ST),
-    V=SH.
+    artigo(S0, S1),
+    S1=[que|S2],
+    sujeito(X, S2, S3),
+    verbo(S3, Y, S4),
+    rleciona(X, Zs).
 
 resposta2(X, A):-
     atom_concat(X, ' eh', P1),
-    atom_concat(P1, ' aas (falta dias da semana - recursao)', P2),
-    %atom_concat(dsemana(P2, X), ' aas ', P2),
-    write(P2),
+    atom_concat(P1, ' as ', P2),
+    rdsemana(A, P3),
+    atom_concat(P2, P3, P4),
+    write(P4),
     nl.
+
+rdsemana([],'').
+rdsemana([H | []],S):-
+    dsemana(D,H), 
+    string_concat(D,'',S), !.
+rdsemana([H|T],S):-
+    dsemana(D,H), rdsemana(T,R),
+    string_concat(D,' e ',W), 
+    string_concat(W,R,S).
 
 resposta(X, A):-
     atom_concat('O(a) professor(a) ', X, P1),
@@ -51,10 +52,12 @@ resposta(X, A):-
 
 leciona(X, Zs):-
     setof(Y, (da(Y, X), resposta(Y, X)), Ys).
+rleciona(X, Zs):-
+    setof(Y, (da(X, Y), resposta(X, Y)), Ys).
 lecionam(X, Zs):-
     bagof(Y, (da(Y, X), resposta(Y, X)), Ys).
-aulas(X, ZS):-
-    setof(Y, (eh(Y, X), resposta2(Y, X)), Ys).
+aulas(X, Zs):-
+    setof(Y, (eh(X, Y), resposta2(X, Y)), Ys).
 
 consulta(X):- 
     monta_lista(L),
